@@ -19,31 +19,25 @@ import 'streamed_response.dart';
 /// maybe [close], and then they get various convenience methods for free.
 abstract mixin class BaseClient implements Client {
   @override
-  Future<Response> head(Uri url, {Map<String, String>? headers}) =>
-      _sendUnstreamed('HEAD', url, headers);
+  Future<Response> head(Uri url, {Map<String, String>? headers}) => _sendUnstreamed('HEAD', url, headers);
 
   @override
-  Future<Response> get(Uri url, {Map<String, String>? headers}) =>
-      _sendUnstreamed('GET', url, headers);
+  Future<Response> get(Uri url, {Map<String, String>? headers}) => _sendUnstreamed('GET', url, headers);
 
   @override
-  Future<Response> post(Uri url,
-          {Map<String, String>? headers, Object? body, Encoding? encoding}) =>
+  Future<Response> post(Uri url, {Map<String, String>? headers, Object? body, Encoding? encoding}) =>
       _sendUnstreamed('POST', url, headers, body, encoding);
 
   @override
-  Future<Response> put(Uri url,
-          {Map<String, String>? headers, Object? body, Encoding? encoding}) =>
+  Future<Response> put(Uri url, {Map<String, String>? headers, Object? body, Encoding? encoding}) =>
       _sendUnstreamed('PUT', url, headers, body, encoding);
 
   @override
-  Future<Response> patch(Uri url,
-          {Map<String, String>? headers, Object? body, Encoding? encoding}) =>
+  Future<Response> patch(Uri url, {Map<String, String>? headers, Object? body, Encoding? encoding}) =>
       _sendUnstreamed('PATCH', url, headers, body, encoding);
 
   @override
-  Future<Response> delete(Uri url,
-          {Map<String, String>? headers, Object? body, Encoding? encoding}) =>
+  Future<Response> delete(Uri url, {Map<String, String>? headers, Object? body, Encoding? encoding}) =>
       _sendUnstreamed('DELETE', url, headers, body, encoding);
 
   @override
@@ -71,8 +65,7 @@ abstract mixin class BaseClient implements Client {
   Future<StreamedResponse> send(BaseRequest request);
 
   /// Sends a non-streaming [Request] and returns a non-streaming [Response].
-  Future<Response> _sendUnstreamed(
-      String method, Uri url, Map<String, String>? headers,
+  Future<Response> _sendUnstreamed(String method, Uri url, Map<String, String>? headers,
       [Object? body, Encoding? encoding]) async {
     var request = Request(method, url);
 
@@ -84,7 +77,7 @@ abstract mixin class BaseClient implements Client {
       } else if (body is List) {
         request.bodyBytes = body.cast<int>();
       } else if (body is Map) {
-        request.bodyFields = body.cast<String, String>();
+        request.bodyFields = body.cast<String, dynamic>();
       } else {
         throw ArgumentError('Invalid request body "$body".');
       }

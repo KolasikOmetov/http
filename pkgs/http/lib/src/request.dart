@@ -49,8 +49,7 @@ class Request extends BaseRequest {
   /// If the request has a `Content-Type` header, setting this will set the
   /// charset parameter on that header.
   Encoding get encoding {
-    if (_contentType == null ||
-        !_contentType!.parameters.containsKey('charset')) {
+    if (_contentType == null || !_contentType!.parameters.containsKey('charset')) {
       return _defaultEncoding;
     }
     return requiredEncodingForCharset(_contentType!.parameters['charset']!);
@@ -101,6 +100,8 @@ class Request extends BaseRequest {
   String get body => encoding.decode(bodyBytes);
 
   set body(String value) {
+    print('mappedBody: $value');
+
     bodyBytes = encoding.encode(value);
     var contentType = _contentType;
     if (contentType == null) {
@@ -128,8 +129,7 @@ class Request extends BaseRequest {
   /// This map should only be set, not modified in place.
   Map<String, String> get bodyFields {
     var contentType = _contentType;
-    if (contentType == null ||
-        contentType.mimeType != 'application/x-www-form-urlencoded') {
+    if (contentType == null || contentType.mimeType != 'application/x-www-form-urlencoded') {
       throw StateError('Cannot access the body fields of a Request without '
           'content-type "application/x-www-form-urlencoded".');
     }
@@ -137,16 +137,24 @@ class Request extends BaseRequest {
     return Uri.splitQueryString(body, encoding: encoding);
   }
 
-  set bodyFields(Map<String, String> fields) {
-    var contentType = _contentType;
-    if (contentType == null) {
-      _contentType = MediaType('application', 'x-www-form-urlencoded');
-    } else if (contentType.mimeType != 'application/x-www-form-urlencoded') {
-      throw StateError('Cannot set the body fields of a Request with '
-          'content-type "${contentType.mimeType}".');
-    }
+  set bodyFields(Map<String, dynamic> fields) {
+    // var contentType = _contentType;
+    // if (contentType == null) {
+    //   _contentType = MediaType('application', 'x-www-form-urlencoded');
+    // } else if (contentType.mimeType != 'application/x-www-form-urlencoded') {
+    //   throw StateError('Cannot set the body fields of a Request with '
+    //       'content-type "${contentType.mimeType}".');
+    // }
 
-    body = mapToQuery(fields, encoding: encoding);
+    // _contentType = MediaType('application', 'x-www-form-urlencoded');
+    _contentType = MediaType('application', 'json');
+
+    print('Start mapToQuery');
+    body = mapToQuery(
+      fields,
+      _contentType,
+      encoding: encoding,
+    );
   }
 
   Request(super.method, super.url)

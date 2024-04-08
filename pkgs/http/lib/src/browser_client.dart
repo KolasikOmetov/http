@@ -5,7 +5,7 @@
 import 'dart:async';
 import 'dart:js_interop';
 
-import 'package:web/web.dart';
+import 'package:web/helpers.dart';
 
 import 'base_client.dart';
 import 'base_request.dart';

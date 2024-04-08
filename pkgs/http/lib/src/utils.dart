@@ -7,16 +7,26 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'byte_stream.dart';
+import 'package:http_parser/src/media_type.dart';
 
 /// Converts a [Map] from parameter names to values to a URL query string.
 ///
 ///     mapToQuery({"foo": "bar", "baz": "bang"});
 ///     //=> "foo=bar&baz=bang"
-String mapToQuery(Map<String, String> map, {required Encoding encoding}) =>
-    map.entries
-        .map((e) => '${Uri.encodeQueryComponent(e.key, encoding: encoding)}'
-            '=${Uri.encodeQueryComponent(e.value, encoding: encoding)}')
-        .join('&');
+String mapToQuery(Map<String, dynamic> map, MediaType? contentType, {required Encoding encoding}) {
+  if (contentType?.mimeType != 'application/json') {
+    final mappedEntries = map.entries.map((e) {
+      final result = '${Uri.encodeQueryComponent(e.key, encoding: encoding)}'
+          '=${Uri.encodeQueryComponent(e.value, encoding: encoding)}';
+      print('mapToQuery: $result');
+      return result;
+    });
+
+    return mappedEntries.join('&');
+  }
+
+  return jsonEncode(map);
+}
 
 /// Returns the [Encoding] that corresponds to [charset].
 ///
@@ -32,8 +42,7 @@ Encoding encodingForCharset(String? charset, [Encoding fallback = latin1]) {
 /// Throws a [FormatException] if no [Encoding] was found that corresponds to
 /// [charset].
 Encoding requiredEncodingForCharset(String charset) =>
-    Encoding.getByName(charset) ??
-    (throw FormatException('Unsupported encoding "$charset".'));
+    Encoding.getByName(charset) ?? (throw FormatException('Unsupported encoding "$charset".'));
 
 /// A regular expression that matches strings that are composed entirely of
 /// ASCII-compatible characters.
