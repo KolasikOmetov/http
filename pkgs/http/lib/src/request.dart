@@ -100,7 +100,6 @@ class Request extends BaseRequest {
   String get body => encoding.decode(bodyBytes);
 
   set body(String value) {
-    print('mappedBody: $value');
 
     bodyBytes = encoding.encode(value);
     var contentType = _contentType;
@@ -138,18 +137,13 @@ class Request extends BaseRequest {
   }
 
   set bodyFields(Map<String, dynamic> fields) {
-    // var contentType = _contentType;
-    // if (contentType == null) {
-    //   _contentType = MediaType('application', 'x-www-form-urlencoded');
-    // } else if (contentType.mimeType != 'application/x-www-form-urlencoded') {
-    //   throw StateError('Cannot set the body fields of a Request with '
-    //       'content-type "${contentType.mimeType}".');
-    // }
-
-    // _contentType = MediaType('application', 'x-www-form-urlencoded');
-    _contentType = MediaType('application', 'json');
-
-    print('Start mapToQuery');
+    var contentType = _contentType;
+    if (contentType == null) {
+      _contentType = MediaType('application', 'x-www-form-urlencoded');
+    } else if (contentType.mimeType != 'application/x-www-form-urlencoded' && contentType.mimeType != 'application/json') {
+      throw StateError('Cannot set the body fields of a Request with '
+          'content-type "${contentType.mimeType}".');
+    }
     body = mapToQuery(
       fields,
       _contentType,
@@ -158,7 +152,7 @@ class Request extends BaseRequest {
   }
 
   Request(super.method, super.url)
-      : _defaultEncoding = utf8,
+      : _defaultEncoding = Encoding.getByName('iso_8859-1') ?? utf8,
         _bodyBytes = Uint8List(0);
 
   /// Freezes all mutable fields and returns a single-subscription [ByteStream]

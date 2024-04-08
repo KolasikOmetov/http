@@ -17,8 +17,7 @@ String mapToQuery(Map<String, dynamic> map, MediaType? contentType, {required En
   if (contentType?.mimeType != 'application/json') {
     final mappedEntries = map.entries.map((e) {
       final result = '${Uri.encodeQueryComponent(e.key, encoding: encoding)}'
-          '=${Uri.encodeQueryComponent(e.value, encoding: encoding)}';
-      print('mapToQuery: $result');
+          '=${Uri.encodeQueryComponent(e.value as String, encoding: encoding)}';
       return result;
     });
 
@@ -32,7 +31,7 @@ String mapToQuery(Map<String, dynamic> map, MediaType? contentType, {required En
 ///
 /// Returns [fallback] if [charset] is null or if no [Encoding] was found that
 /// corresponds to [charset].
-Encoding encodingForCharset(String? charset, [Encoding fallback = latin1]) {
+Encoding encodingForCharset(String? charset, [Encoding fallback = utf8]) {
   if (charset == null) return fallback;
   return Encoding.getByName(charset) ?? fallback;
 }
